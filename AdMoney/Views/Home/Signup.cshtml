@@ -1,0 +1,32 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container" id="SignupBox">
+    <div class="row justify-content-center my-6">
+
+        @using (Html.BeginForm("Signup", "Home", FormMethod.Post))
+        {
+            <label for="name">Name : </label>
+            <input type="text" name="name" id="name" />
+
+            <label for="emailId">Email : </label>
+            <input type="email" name="email"  id  ="emailId"/>
+            
+            <label for="passwordId">Password : </label>
+            <input type="password" name="password" id = "passwordId"/>
+            
+            <label for="role"> Your Role </label>
+
+            <select name="role" id="role">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+               
+            </select>
+            <input type="submit" value="Signup" />
+            
+        }
+    </div>
+
+</div>
