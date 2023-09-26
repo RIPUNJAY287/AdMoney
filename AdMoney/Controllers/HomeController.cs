@@ -1,8 +1,11 @@
 ﻿using AdMoney.Models;
 using AdMoney.Repository.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace AdMoney.Controllers
 {
@@ -16,7 +19,7 @@ namespace AdMoney.Controllers
         {
             _signupUser = signupUser ?? throw new ArgumentNullException(nameof(signupUser));
             _logger = logger;
-            _loginUser = loginUser ?? throw new ArgumentNullException(nameof(loginUser)); ;
+            _loginUser = loginUser ?? throw new ArgumentNullException(nameof(loginUser)); 
         }
 
         public IActionResult Index()
@@ -26,26 +29,65 @@ namespace AdMoney.Controllers
 
         public IActionResult Login()
         {
+            /*  ClaimsPrincipal claimUser = HttpContext.User;
+              if(claimUser.Identity.IsAuthenticated)
+              {
+                  return RedirectToAction("Index", "Home");
+              }*/
+            ViewData["check"] = "false";
+            ViewData["access"] = "Not admin access";
             return View();
         }
         [HttpPost]
-        public IActionResult Login(UserLogin userLogin)
-        { 
-            if(userLogin == null)
+        public  async Task<IActionResult> Login(UserLogin userLogin)
+        {
+            Console.WriteLine("helloo " + userLogin.email + " " + userLogin.password + "  ->" + userLogin.role);
+            if (userLogin == null )
             {
+                ViewData["check"] = "true";
+                ViewData["access"] = "Not admin access";
                 return View();
             }
 
-            Console.WriteLine("helloo " + userLogin.email + " " + userLogin.password);
-            int Id  = _loginUser.CheckValidUser(userLogin.email, userLogin.password);
-            Console.WriteLine(Id + " id ");
-            if (Id != 0)
+            Console.WriteLine("helloo " + userLogin.email + " " + userLogin.password + "  ->" + userLogin.role + "<-");
+
+
+            User user  = _loginUser.CheckValidUser(userLogin.email, userLogin.password,userLogin.role);
+            
+            if (user != null)
             {
-               return RedirectToAction("Index", "Home");
+
+                List<Claim> claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                        new Claim(ClaimTypes.Email,user.Email),
+                        new Claim(ClaimTypes.Role,user.Role)
+                    };
+
+                ClaimsIdentity claimsIdentity  =  new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                AuthenticationProperties properties = new AuthenticationProperties()
+                {
+                    AllowRefresh = true,
+                    IsPersistent = false
+                };
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), properties);
+                if(user.Role == "Admin")
+                {
+                    return RedirectToAction("AdminInfo", "Admin");
+                }
+                return RedirectToAction("Index", "Advisor");
             }
+            ViewData["check"] = "true";
+            ViewData["access"] = "Not Valid access";
             return View();
         }
         
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Home");
+        }
         public IActionResult Signup()
         {
             return View();
@@ -53,6 +95,15 @@ namespace AdMoney.Controllers
         [HttpPost]
         public IActionResult Signup(UserSignup userSignup)
         {
+            if(userSignup!= null && userSignup.Role == "Admin")
+            {
+               if( !_signupUser.checkAdminUser(userSignup.Email))
+                {
+                    ViewData["check"] = "false";
+                    return View();
+                }
+
+            }
             Console.WriteLine(userSignup.Name  + " " + userSignup.Email + " " + userSignup.Password + " " + userSignup.Role) ;
             User user = new User()
             {
@@ -62,6 +113,7 @@ namespace AdMoney.Controllers
                 Role = userSignup.Role
             };
             _signupUser.AddSignupUser(user);
+           
             return View();
         }
         public IActionResult Privacy()

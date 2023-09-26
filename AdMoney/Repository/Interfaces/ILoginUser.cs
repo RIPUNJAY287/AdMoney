@@ -1,8 +1,10 @@
-﻿namespace AdMoney.Repository.Interfaces
+﻿using AdMoney.Models;
+
+namespace AdMoney.Repository.Interfaces
 {
     public interface ILoginUser
     {
-        public  int CheckValidUser(string username, string password);
+        public  User CheckValidUser(string username, string password,string role);
 
     }
 }

@@ -1,0 +1,66 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var questionData = ViewData["QuestionForAdClient"] as QuestionOptionsData;
+    var clientId = ViewData["clientId"];
+    var nextQuestion = ViewData["NextQuestion"];
+}
+
+<section>
+
+    <div class="container-fluid" id="questionBox">
+        <div class="row justify-content-center my-6">
+            @if (questionData != null)
+            {
+                <form id="questionForm" class="col-8 border border-primary py-5 px-5 ">
+                    <h5 class="my-2" id="question"> @questionData.Question </h5>
+
+                    <input type="hidden" id="questionId" value="@questionData.QuestionId" />
+                    <input type="hidden" id="clientId" value="@clientId" />
+                    <div id="radioOptions">
+                        @for (int ind = 0; ind < questionData.Options.Count; ind++)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="@questionData.OptionId[ind]">
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    @questionData.Options[ind]
+                                </label>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="my-5 px-5" id="nextQuestion">
+                        <button type="submit" class="btn btn-primary float-right"  id="NextQuestionId">     Next  </button>
+                    </div>
+                </form>
+            }
+            else
+            {
+
+                <script>
+                    GetRiskData(@clientId);
+                </script>
+                
+            }
+            <div class="jumbotron  jumbotron-fluid  text-center " id="riskProfile">
+                <div class="container text-center ">
+                    <h1 class="display-4">Your Risk Profile</h1>
+                    <h2 id="profile"></h2>
+                    <img src="../Static/MidRisk.png" alt="risk" id="riskPic">
+                    <br/>
+                    @Html.ActionLink("Add Model ", "RiskProfileModel", "Advisor", new { clientId= @clientId }, new {@class  = "btn btn-primary my-1 mx-auto"})
+                </div>
+
+
+                @*@Html.ActionLink("", null, "Advisor", new { clientId= @clientId},   new {@class  = "btn btn-outline-info my-1 mx-auto"})*@
+                @*<button type="button" class="btn btn-outline-info my-1 mx-auto" id="enterPlan">Enter your plan details</button>*@
+
+            </div>
+
+         
+        </div>
+    </div>
+
+
+</section> 

@@ -1,0 +1,227 @@
+﻿
+
+@{
+    var userPro = ViewData["UserProfile"] as User;
+    var lowRisk = ViewData["LowRiskModel"] as List<ModelSelectData>;
+    var midRisk = ViewData["MidRiskModel"] as List<ModelSelectData>;
+    var highRisk = ViewData["HighRiskModel"] as List<ModelSelectData>;
+    var clientList = ViewData["Client"] as List<Client>;
+}
+<div>
+
+ 
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-8 offset-2">
+               
+                @if(userPro  != null)
+                {
+                    <section class="vh-50" style="background-color: #f4f5f7;">
+  <div class="container py-5 h-50">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-lg-6 mb-4 mb-lg-0">
+        <div class="card mb-3" style="border-radius: .5rem;">
+          <div class="row g-0">
+            <div class="col-md-4 gradient-custom text-center text-white"
+              style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                alt="Avatar" class="img-fluid my-5" style="width: 80px;" />
+              <h5> @userPro.Name </h5>
+              <p></p>
+              <i class="far fa-edit mb-5"></i>
+            </div>
+            <div class="col-md-8">
+              <div class="card-body p-4">
+                <h6>Information</h6>
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  <div class="col-6 mb-3">
+                    <h6>Email</h6>
+                    <p class="text-muted">@userPro.Name</p>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <h6>Phone</h6>
+                    <p class="text-muted">123 456 789</p>
+                  </div>
+                </div>
+                                                    <h5>  <span> @Html.ActionLink("Logout", "Logout", "Home",null, new {@class  = "btn btn-danger my-1 mx-auto"})</span> </h5>
+                
+          
+                <div class="d-flex justify-content-start">
+                  <a href="#!"><i class="fab fa-facebook-f fa-lg me-3"></i></a>
+                  <a href="#!"><i class="fab fa-twitter fa-lg me-3"></i></a>
+                  <a href="#!"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+                }
+            </div>
+            </div>
+        <div class="row">
+            
+            <div class="modal" tabindex="-1" id="PieChartBody">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Modal title</h5>
+                            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close" onclick="modalClose()"></button>
+                        </div>
+                        <div class="modal-body">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                      @*  <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        </div>*@
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+           
+                <h3> Models  : <span> @Html.ActionLink("Add Mddels ", "Models", "Advisor",null, new {@class  = "btn btn-primary my-1 mx-auto"})</span> </h3>
+                @if (lowRisk != null)
+                {
+                    <h4>LowRisk Models </h4>
+                  
+                        @foreach (var risk in lowRisk)
+                        {
+                    <div class="col-4 offset-1" onclick="GetPieChart(this)">
+
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">Model ID : @risk.modelId</h5>
+                                <h6 class="card-subtitle mb-2 text-muted"> Risk : @risk.riskProfile</h6>
+                                @if (risk.assetInfo != null)
+                                {
+                                    @foreach (var at in risk.assetInfo)
+                                    {
+                                        <p> @at.assetId @at.assetName @at.securityName </p> <h3>  @at.weight  </h3>
+                                    }
+                                }
+                               
+                            </div>
+                        </div>
+                        </div>
+                             
+                        }
+                    
+                    }
+                    else
+                    {
+                      <p1>no clients</p1>
+
+                    }
+        </div>
+        <div class="row">
+                           @if (midRisk != null)
+                { 
+                    <h4>MidRisk Models </h4>
+                        @foreach (var risk in midRisk)
+                        {
+                    <div class="col-4 offset-1" onclick="GetPieChart(this)">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Model ID : @risk.modelId</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted"> Risk : @risk.riskProfile</h6>
+                                    @if (risk.assetInfo != null)
+                                    {
+                                        @foreach (var at in risk.assetInfo)
+                                        {
+                                        <p> @at.assetId @at.assetName @at.securityName </p> <h3>  @at.weight  </h3>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                            </div>
+                        }
+                       
+                    }
+                    else
+                    {
+                      <p1>no clients</p1>
+
+                    }
+        </div>
+        <div class="row">
+                @if (highRisk != null)
+                {
+                    <h4>HighRisk Models </h4>
+           
+                        @foreach (var risk in highRisk)
+                        {
+                    <div class="col-4 offset-1" onclick="GetPieChart(this)">
+                            <div class="card" style="width: 18rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Model ID : @risk.modelId</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted"> Risk : @risk.riskProfile</h6>
+                                    @if (risk.assetInfo != null)
+                                    {
+                                        @foreach (var at in risk.assetInfo)
+                                        {
+                                        <p> @at.assetId @at.assetName @at.securityName </p> <h3>  @at.weight  </h3>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                        }
+                      
+
+                }
+                else
+                {
+                    <p1>no clients</p1>
+
+                }
+            <div>
+
+
+
+
+
+
+        <div class="row">
+
+                <h3> Clients  : <span> @Html.ActionLink("Add Client ", "AddClient", "Advisor",null, new {@class  = "btn btn-primary my-1 mx-auto"})</span> </h3>
+
+                @if(clientList != null)
+            {
+              
+                  
+                    @foreach (var c in clientList)
+                    {
+                          <div class="col-10 offset-1" >
+                        <div class="card">
+                            <div class="card-header"> @c.Name  </div>
+                            <div class="card-body">
+                                <h5 class="card-title"> @c.RiskProfile </h5>
+                                <p class="card-text"> Pan Card : @c.PanCard </p>
+                                <p class="card-text"> Aadhar Card : @c.AadharCard </p>
+                                <p class="card-text"> ModelID : @c.modelId </p>
+                                <p class="card-text"> ModelID : @c.Email </p>
+
+                               
+                            </div>
+
+                        </div>
+                        </div>
+                    }
+                  
+                }
+        </div>
+</div>
+</div>

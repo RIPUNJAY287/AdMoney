@@ -13,15 +13,15 @@ namespace AdMoney.Repository.Implementation
         public LoginUser(AdMoneyContext context) {
             _context = context;
         }
-        public int CheckValidUser(string email, string password)
+        public User CheckValidUser(string email, string password, string role)
         {
-            User? user = _context.Users.Where(user=> user.Email == email && user.Password == password).FirstOrDefault();
+            User? user = _context.Users.Where(user=> user.Email == email && user.Password == password && user.Role == role).FirstOrDefault();
             
             if (user != null)
             {
-                return user.Id;
+                return user;
             }
-            return 0 ;
+            return user;
         }
     }
 }

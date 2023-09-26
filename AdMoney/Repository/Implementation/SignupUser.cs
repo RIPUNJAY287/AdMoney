@@ -2,6 +2,7 @@
 using AdMoney.Models;
 using AdMoney.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace AdMoney.Repository.Implementation
 {
@@ -19,5 +20,18 @@ namespace AdMoney.Repository.Implementation
 
             return user.Id;
         }
+
+        public bool checkAdminUser(string email)
+        {
+            Console.WriteLine("emaiil admin " + email );
+            var usr = _context.AdminUsers.Where(user => user.Email ==email).FirstOrDefault();
+            if(usr != null) 
+            {
+                return true;
+            }
+            return false;
+        }
+
+    
     }
 }

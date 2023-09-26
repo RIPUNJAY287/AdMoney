@@ -1,8 +1,8 @@
 using AdMoney.Data;
 using AdMoney.Repository.Interfaces;
 using AdMoney.Repository.Implementation;
-
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +14,34 @@ builder.Services.AddDbContext<AdMoneyContext>(options => options.UseSqlServer("D
 
 builder.Services.AddTransient<ISignupUser, SignupUser>();
 builder.Services.AddTransient<ILoginUser, LoginUser>();
+builder.Services.AddTransient<IAdvisorClientData, AdvisorClientData>();
+builder.Services.AddTransient<IModels,Models>();
+builder.Services.AddTransient<IQuestions,Questions>();
+builder.Services.AddTransient<IAdminUser,AdminUser>();
+
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(option =>
+        {
+            option.LoginPath = "/Home/Index";
+            option.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        }) ;   
+
+/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+  .AddJwtBearer(options => {
+      options.TokenValidationParameters = new()
+      {
+          ValidateIssuer = true,
+          ValidateAudience = true,
+          ValidateLifetime = true,
+          ValidateIssuerSigningKey = true,
+          ValidIssuer = builder.Configuration["Authentication:Issuer"],
+          ValidAudience = builder.Configuration["Authentication:Audience"],
+          IssuerSigningKey = new SymmetricSecurityKey(
+          Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"])
+          )
+      };
+  });*/
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,6 +56,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

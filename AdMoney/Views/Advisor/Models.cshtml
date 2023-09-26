@@ -1,0 +1,42 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var assetSecurityList = ViewData["AssetSecurityList"] as List<AssetSecurity>;
+    
+}
+
+
+<div>
+    <div id='divAssets'>         
+    @foreach(var assetSecurity in assetSecurityList)
+    {
+    //    var idd = @assetSecurity.Asset + @assetSecurity.SecurityName;
+       <div id="@assetSecurity.Asset-@assetSecurity.SecurityName"> 
+            <input id = @assetSecurity.Id type="checkbox" value='asset1 Security1' />
+            <label> @assetSecurity.Asset  @assetSecurity.SecurityName </label>
+        </div>
+    }
+       
+    </div>                                  
+    <button class="btn btn-primary" onclick="AddWeightage()"> Add weightage</button>
+
+ 
+    <div id="ModelDiv">
+    <table id="WeightageTable">
+         <tr>
+             <td>
+            <select name="role" id="modelRole">
+                <option value="LowRisk">LowRisk</option>
+                <option value="MidRisk">MidRisk</option>
+                <option value="HighRisk">HighRisk</option>
+
+            </select>
+                </td>
+            </tr>
+    </table>
+
+    </div>
+    
+
+</div>
